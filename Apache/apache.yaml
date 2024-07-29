@@ -1,0 +1,34 @@
+---
+name: installing and updating packages 
+hosts: [Ubuntu]
+become: yes
+tasks:
+  - name: installing apache on ubuntu
+    ansible.builtin.apt:
+      name: apache2
+      update_cache: yes
+      state: present
+  - name: enble and start apche on ubuntu
+    ansible.builtin.systemd_service:
+      name: apache2
+      enbled: yes
+      state: started
+
+---
+---
+name: installing and updating packages 
+hosts: [RedHat]
+become: yes
+tasks:
+  - name: installing apache on RedHat
+    ansible.builtin.dnf:
+      name: httpd
+      update_cache: yes
+      state: present
+  - name: enble and start apche on RedHat
+    ansible.builtin.systemd_service:
+      name: httpd
+      enbled: yes
+      state: started
+
+---     
