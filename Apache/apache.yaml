@@ -1,6 +1,6 @@
 ---
 name: installing and updating packages 
-hosts: [Ubuntu]
+hosts: all
 become: yes
 tasks:
   - name: installing apache on ubuntu
@@ -8,27 +8,23 @@ tasks:
       name: apache2
       update_cache: yes
       state: present
+    when: ansible_facts['os_family'] == "Debian"
   - name: enble and start apche on ubuntu
     ansible.builtin.systemd_service:
       name: apache2
       enbled: yes
       state: started
-
----
----
-name: installing and updating packages 
-hosts: [RedHat]
-become: yes
-tasks:
+    when: ansible_facts['os_family'] == "Debian"
   - name: installing apache on RedHat
     ansible.builtin.dnf:
       name: httpd
       update_cache: yes
       state: present
+    when: ansible_facts['os_family'] == "RedHat"
   - name: enble and start apche on RedHat
     ansible.builtin.systemd_service:
       name: httpd
       enbled: yes
       state: started
-
+    when: ansible_facts['os_family'] == "RedHat"
 ---     
