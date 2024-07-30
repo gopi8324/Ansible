@@ -9,22 +9,15 @@ tasks:
       update_cache: yes
       state: present
     when: ansible_facts['os_family'] == "Debian"
-  - name: enble and start apche on ubuntu
-    ansible.builtin.systemd_service:
-      name: apache2
-      enbled: yes
-      state: started
-    when: ansible_facts['os_family'] == "Debian"
   - name: installing apache on RedHat
     ansible.builtin.dnf:
       name: httpd
       update_cache: yes
       state: present
     when: ansible_facts['os_family'] == "RedHat"
-  - name: enble and start apche on RedHat
+  - name: enble and start service
     ansible.builtin.systemd_service:
-      name: httpd
+      name: "{{package_name}}"
       enbled: yes
       state: started
-    when: ansible_facts['os_family'] == "RedHat"
 ---     

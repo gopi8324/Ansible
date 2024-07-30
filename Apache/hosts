@@ -1,4 +1,4 @@
 [Ubuntu]
-192.168.10.0
+192.168.10.0  package_name = apache2
 [RedHat]
-192.168.10.70
+192.168.10.70 package_name = httpd
