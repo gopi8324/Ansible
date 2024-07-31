@@ -1,0 +1,41 @@
+# Manual steps:
+#sudo apt update
+#sudo apt install apache2 -y
+#sudo systemctl enable apache2
+#sudo systemctl start apache2
+#sudo apt install php libapache2-mod-php php-mysql
+#sudo systemctl restart apache2
+name: installing php on ubuntu
+become: yes
+hosts: all
+tasks:
+  - name: this file is used only ubuntu machine
+    ansible.builtin.fail:
+      msg: "this playbook for ubuntu and Redhat"
+    when: ansible_facts[os_family]!= 'RedHat' 
+  - name: installing and updating packages on ubuntu
+    ansible.builtin.apt:
+      name: "{{package}}"
+      update_cache: yes
+      state: present
+  - name: enable and starting apache2
+    ansible.builtin.systemd_service:
+      name: "{{package}}"
+      enabled: true
+      state: started
+  - name: installing php on ubuntu
+    ansible.builtin.apt:
+      name: "{{package_name}}"
+      state: present
+  - name: restart apache
+    ansible.builtin.systemd_service:
+      name: "{{package}}"
+      state: restarted
+  - name: copying a phpfile
+    copy:
+      src: info.php
+      dest: /var/www/html/info.php
+  - name: restart apache
+    ansible.builtin.systemd_service:
+      name: "{{package}}"
+      state: restarted
