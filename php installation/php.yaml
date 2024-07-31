@@ -11,8 +11,8 @@ hosts: all
 tasks:
   - name: this file is used only ubuntu machine
     ansible.builtin.fail:
-      msg: "this playbook for ubuntu and Redhat"
-    when: ansible_facts[os_family]!= 'RedHat' 
+      msg: "this playbook for ubuntu "
+    when: ansible_facts[os_family]!= 'Debian' 
   - name: installing and updating packages on ubuntu
     ansible.builtin.apt:
       name: "{{package}}"
