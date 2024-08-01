@@ -1,0 +1,6 @@
+java_package: openjdk-11-jdk
+user: tomcat
+group: tomcat
+home_directory: /opt/tomcat
+user_sheel: 'bin/false'
+tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.10/bin/apache-tomcat-10.0.10.tar.gz

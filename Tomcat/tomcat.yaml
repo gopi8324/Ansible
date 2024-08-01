@@ -1,0 +1,39 @@
+# Manual steps
+# sudo apt update
+#sudo apt install openjdk-11-jdk -y
+#sudo useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat
+#cd /tmp/
+#wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.10/bin/apache-tomcat-10.0.10.tar.gz
+name: installing and updating tomcat on ubuntu
+become: yes
+hosts: all
+tasks:
+  - name: this file is used only ubuntu machine
+    ansible.builtin.fail:
+      msg: "this playbook for ubuntu "
+    when: ansible_facts[os_family]!= 'Debian'
+  - name: insatlling java11 on ubuntu
+    ansible.builtin.apt:
+      name: "{{java_package}}"
+      become: yes
+      update_cache: yes
+      state: present
+  - name: creating a tomcat group
+    ansible.builtin.group:
+      name: "{{group}}"
+      state: present
+    become: yes
+  - name: Creating a user
+    ansible.builtin.user:
+      create_home: yes
+      name: "{{user}}"
+      home: "{{home_directory}}"
+      group: "{{group}}"
+      shell: "{{user_sheel}}"
+      system: true
+      state: present
+    become: yes
+  - name: command to download packages
+    ansible.builtin.get_url:
+      url: "{{tomcat_url}}"
+      dest: /tmp/apache-tomcat-10.0.10.tar.gz
