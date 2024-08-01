@@ -18,23 +18,24 @@ tasks:
       name: "{{package}}"
       update_cache: yes
       state: present
-  - name: enable and starting apache2
-    ansible.builtin.systemd_service:
-      name: "{{package}}"
-      enabled: true
-      state: started
+    notify:
+      - enable and start apache
   - name: installing php on ubuntu
     ansible.builtin.apt:
       name: "{{package_name}}"
       state: present
-  - name: restart apache
-    ansible.builtin.systemd_service:
-      name: "{{package}}"
-      state: restarted
+    notify:
+      - restart apache
   - name: copying a phpfile
     copy:
       src: info.php
       dest: /var/www/html/info.php
+    handlers:
+      - name: enable and start apache
+        service:
+          name: "{{ package }}"
+          enabled: yes
+          state: started
   - name: restart apache
     ansible.builtin.systemd_service:
       name: "{{package}}"
