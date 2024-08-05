@@ -11,18 +11,22 @@ tasks:
   - name: this file is used only ubuntu machine
     ansible.builtin.fail:
       msg: "this playbook for ubuntu "
-    when: ansible_facts[os_family]!= 'Debian'
-  - name: insatlling java11 on ubuntu
+    when: ansible_facts[os_family]!= 'Debian' && ansible_facts[os_family]!= 'RedHat'
+  - name: insatlling java 11 on ubuntu
     ansible.builtin.apt:
       name: "{{java_package}}"
-      become: yes
+      update_cache: yes
+      state: present
+    when: ansible_facts[os_family]= 'Debian'
+  - name: installing java 11 on RedHat
+    ansible.builtin.dnf:
+      name: "{{java_package}}"
       update_cache: yes
       state: present
   - name: creating a tomcat group
     ansible.builtin.group:
       name: "{{group}}"
       state: present
-    become: yes
   - name: Creating a user
     ansible.builtin.user:
       create_home: yes
@@ -32,8 +36,25 @@ tasks:
       shell: "{{user_sheel}}"
       system: true
       state: present
-    become: yes
-  - name: command to download packages
-    ansible.builtin.get_url:
-      url: "{{tomcat_url}}"
-      dest: /tmp/apache-tomcat-10.0.10.tar.gz
+  - ansible.builtin.debug:
+        msg: "user {{ user }} has been created"
+  - name: tomcat downloaded
+    ansible.builtin.unarchive:
+      src: "{{ tomcat_url }}"
+      dest: "{{ home_dir  }}"
+      owner: "{{ user }}"
+      remote_src: yes
+  - ansible.builtin.debug:
+        msg: "tomcat is downloaded and extracted to {{ home_dir  }}"
+  - name: find all the shell files
+    find:
+      paths: "/opt/tomcat/apache-tomcat-10.0.10/bin"
+      patterns: '*.sh'
+    register: shell_files
+  - name: change permissions to execute
+    file:
+      path: "{{ item.path }}"
+      owner: "{{ user }}"
+      group: "{{ group }}"
+      mode: "755"
+    loop: "{{ shell_files.files }}"
