@@ -41,7 +41,7 @@ tasks:
   - name: tomcat downloaded
     ansible.builtin.unarchive:
       src: "{{ tomcat_url }}"
-      dest: "{{ home_dir  }}"
+      dest: "{{ home_directory }}"
       owner: "{{ user }}"
       remote_src: yes
   - ansible.builtin.debug:

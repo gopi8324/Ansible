@@ -1,0 +1,67 @@
+name: This playbook for nopcommerce
+hosts: all
+become: yes
+tasks:
+  - name: this file is used only ubuntu machine
+    ansible.builtin.fail:
+      msg: "this playbook for ubuntu "
+    when: ansible_facts[os_family]!= 'Debian' 
+  - name: Register Microsoft key and feed
+    ansible.builtin.get_url:
+      dest: "{{dest}}" 
+      url: "{{url_microsoft key}}"
+  - name: Install packages-microsoft-prod.deb
+    ansible.builtin.dpkg_selections:
+      name: packages-microsoft-prod.deb
+      selection: install
+  - name: installing dotnet 8.0
+    ansible.builtin.apt:
+      name: "{{dotnet_package}}"
+      update_cache: yes
+      state: present
+  - name: start and status of nginx service
+    ansible.builtin.systemd_service:
+      name: nginx
+      enabled: yes
+      state: started
+  - name: copying a server config file
+    ansible.builtin.copy:
+      src: server config
+      dest: /etc/nginx/sites-available/default
+  - name: creating a directory
+    ansible.builtin.file:
+      path: /var/www/nopCommerce
+      state: directory
+      user: "{{user}}"
+      group: "{{Group}}"
+      mode: "0755"
+  - name: creating a directory
+    ansible.builtin.file:
+      path: /var/www/nopCommerce/bin
+      user: "{{user}}"
+      group: "{{group}}"
+      state: directory
+      mode: "0755"
+  - name: creating a directory
+    ansible.builtin.file:
+      path: /var/www/nopCommerce/logs
+      state: directory
+      mode: "0755"
+  - name: downloading nopcommerce
+    ansible.builtin.get_url:
+      dest: "{{directory}}"
+      url: "{{url_nop commerce}}"
+  - name: copying a nopcommerce servicefile
+    ansible.builtin.copy:
+      src: servicefile
+      dest: /etc/systemd/system/nopCommerce.service
+  - name: start and status of nopcommerce
+    ansible.builtin.systemd_service:
+      name: nopCommerce.service
+      enabled: yes
+      state: started
+  - name: start and reload nginx 
+    ansible.builtin.systemd_service:
+      name: nginx
+      enbled: yes
+      state: started
