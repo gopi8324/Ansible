@@ -19,33 +19,18 @@ tasks:
       name: "{{dotnet_package}}"
       update_cache: yes
       state: present
-  - name: start and status of nginx service
-    ansible.builtin.systemd_service:
-      name: nginx
-      enabled: yes
-      state: started
+    notify:
+      - restart nginx
   - name: copying a server config file
     ansible.builtin.copy:
       src: server config
       dest: /etc/nginx/sites-available/default
   - name: creating a directory
     ansible.builtin.file:
-      path: /var/www/nopCommerce
+      path: "{{path}}"
       state: directory
       user: "{{user}}"
       group: "{{Group}}"
-      mode: "0755"
-  - name: creating a directory
-    ansible.builtin.file:
-      path: /var/www/nopCommerce/bin
-      user: "{{user}}"
-      group: "{{group}}"
-      state: directory
-      mode: "0755"
-  - name: creating a directory
-    ansible.builtin.file:
-      path: /var/www/nopCommerce/logs
-      state: directory
       mode: "0755"
   - name: downloading nopcommerce
     ansible.builtin.get_url:
@@ -60,8 +45,13 @@ tasks:
       name: nopCommerce.service
       enabled: yes
       state: started
-  - name: start and reload nginx 
+    handlers:
+      - name: enable and start nginx
+        service:
+          name: nginx
+          enabled: yes
+          state: started
+  - name: restart nginx
     ansible.builtin.systemd_service:
       name: nginx
-      enbled: yes
-      state: started
+      state: restarted

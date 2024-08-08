@@ -4,6 +4,10 @@ dotnet_package:
   - nginx
   - unzip
 dest: /home/ubuntu
+path:
+  - /var/www/nopCommerce
+  - /var/www/nopCommerce/bin
+  - /var/www/nopCommerce/logs
 user: www-data
 Group: www-data
 directory: /var/www/nopCommerce
